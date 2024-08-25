@@ -54,19 +54,25 @@ pipeline {
 
         // New Docker Run Stage
         stage('Docker Run') {
-            steps {
-                script {
-                    // Stop the previous container if it's running
-                    bat '''
-                    if ( docker ps -a -q --filter "name=my-dotnet-app-container" ) | findstr .; then `
-                       ( docker stop my-dotnet-app-container && docker rm my-dotnet-app-container )
-                    '''
+    steps {
+        script {
+            // Stop and remove the existing container if it exists
+            bat '''
+            @echo off
+            SETLOCAL
+            FOR /F "tokens=*" %%i IN ('docker ps -a -q --filter "name=my-dotnet-app-container"') DO (
+                docker stop %%i
+                docker rm %%i
+            )
+            ENDLOCAL
+            '''
 
-                    // Run the Docker container
-                    bat 'docker run -d --name my-dotnet-app-container -p 8080:80 my-dotnet-app'
-                }
-            }
+            // Run the Docker container
+            bat 'docker run -d --name my-dotnet-app-container -p 8080:80 my-dotnet-app'
         }
+    }
+}
+
 
         stage('Deploy') {
             steps {
