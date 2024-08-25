@@ -58,7 +58,7 @@ pipeline {
                 script {
                     // Stop the previous container if it's running
                     bat '''
-                    if docker ps -a -q --filter "name=my-dotnet-app-container" | findstr .; then `
+                    if ( docker ps -a -q --filter "name=my-dotnet-app-container" ) | findstr .; then `
                         docker stop my-dotnet-app-container && docker rm my-dotnet-app-container
                     '''
 
