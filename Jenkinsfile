@@ -16,7 +16,6 @@ pipeline {
             steps {
                 script {
                     // Restoring dependencies
-                    //bat "cd ${DOTNET_CLI_HOME} && dotnet restore"
                     bat "dotnet restore"
 
                     // Building the application
@@ -42,7 +41,33 @@ pipeline {
                 }
             }
         }
-        
+
+        // New Docker Build Stage
+        stage('Docker Build') {
+            steps {
+                script {
+                    // Build the Docker image
+                    bat 'docker build -t my-dotnet-app .'
+                }
+            }
+        }
+
+        // New Docker Run Stage
+        stage('Docker Run') {
+            steps {
+                script {
+                    // Stop the previous container if it's running
+                    bat '''
+                    if docker ps -a -q --filter "name=my-dotnet-app-container" | findstr .; then `
+                        docker stop my-dotnet-app-container && docker rm my-dotnet-app-container
+                    '''
+
+                    // Run the Docker container
+                    bat 'docker run -d --name my-dotnet-app-container -p 8080:80 my-dotnet-app'
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 script {
@@ -52,10 +77,10 @@ pipeline {
                     $credentials = New-Object System.Management.Automation.PSCredential($env:CREDENTIAL_USERNAME, (ConvertTo-SecureString $env:CREDENTIAL_PASSWORD -AsPlainText -Force))
 
                     
-                    New-PSDrive -Name X -PSProvider FileSystem -Root "\\\\SHALUTIW\\smsapp" -Persist -Credential $credentials
+                    New-PSDrive -Name X -PSProvider FileSystem -Root "\\\\SHALUTIW\\coreapp" -Persist -Credential $credentials
 
                     
-                    Copy-Item -Path '.\\publish\\*' -Destination 'X:\' -Force
+                    Copy-Item -Path '.\\publish\\*' -Destination 'X:\\' -Force
 
                     
                     Remove-PSDrive -Name X
@@ -63,12 +88,15 @@ pipeline {
                 }
                 }
             }
-        }   
+        }
     }
 
     post {
         success {
-            echo 'Build, test, and publish successful!'
+            echo 'Build, test, publish, and Docker deployment successful!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
