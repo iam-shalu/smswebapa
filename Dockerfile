@@ -4,15 +4,12 @@ FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019
 # Set the working directory
 WORKDIR /inetpub/wwwroot
 
-# Ensure the necessary services are enabled and started
-SHELL ["cmd", "/S", "/C"]
-RUN sc config trustedinstaller start=auto && sc start trustedinstaller
-
-# Install IIS
-RUN dism.exe /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-WebServer /featurename:IIS-ISAPIFilter /featurename:IIS-ISAPIExtensions /featurename:IIS-NetFxExtensibility /featurename:IIS-ASPNET45 /featurename:IIS-ManagementConsole /NoRestart
+# Install IIS and necessary features
+SHELL ["powershell", "-Command"]
+RUN Install-WindowsFeature -Name Web-Server, Web-WebServer, Web-Security, Web-ISAPI-Filter, Web-ISAPI-Extension, Web-Net-Ext45, Web-Asp-Net45, Web-Mgmt-Console
 
 # Grant IIS permissions to the IIS_IUSRS group
-RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:F /T
+RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:(OI)(CI)F /T
 
 # Grant the Application Pool Identity permissions to modify IIS settings
 RUN icacls "C:\inetpub\wwwroot" /grant "IIS APPPOOL\DefaultAppPool":(OI)(CI)F /T
