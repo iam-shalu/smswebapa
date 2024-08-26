@@ -4,6 +4,9 @@ FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019
 # Set the working directory
 WORKDIR /inetpub/wwwroot
 
+# Install IIS
+RUN dism.exe /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-WebServer /featurename:IIS-ISAPIFilter /featurename:IIS-ISAPIExtensions /featurename:IIS-NetFxExtensibility /featurename:IIS-ASPNET45 /featurename:IIS-ManagementConsole /NoRestart
+
 # Grant IIS permissions to the IIS_IUSRS group
 RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:F /T
 
