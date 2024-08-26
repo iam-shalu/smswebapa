@@ -14,17 +14,5 @@ SHELL ["cmd", "/S", "/C"]
 # Grant IIS permissions to the IIS_IUSRS group
 RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:(OI)(CI)F /T
 
-# Grant the Application Pool Identity permissions to modify IIS settings
-RUN icacls "C:\inetpub\wwwroot" /grant "IIS APPPOOL\DefaultAppPool":(OI)(CI)F /T
-
-# Switch back to PowerShell
-SHELL ["powershell", "-Command"]
-
-# Copy the .NET application files to the container
-COPY ./ /inetpub/wwwroot
-
-# Expose port 80
-EXPOSE 80
-
-# Start IIS
-CMD ["C:\\ServiceMonitor.exe", "w3svc"]
+# Grant the Network Service permissions to modify IIS settings
+RU
