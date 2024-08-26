@@ -14,8 +14,9 @@ SHELL ["cmd", "/S", "/C"]
 # Grant IIS permissions to the IIS_IUSRS group
 RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:(OI)(CI)F /T
 
-# Grant the Network Service permissions to modify IIS settings
+# Grant the Network Service and IUSR permissions to modify IIS settings
 RUN icacls "C:\inetpub\wwwroot" /grant "IUSR":(OI)(CI)F /T
+RUN icacls "C:\inetpub\wwwroot" /grant "NETWORK SERVICE":(OI)(CI)F /T
 
 # Switch back to PowerShell
 SHELL ["powershell", "-Command"]
