@@ -68,7 +68,7 @@ pipeline {
             '''
 
             // Run the Docker container
-            bat 'docker run -d --name my-dotnet-app-container -p 8080:80 my-dotnet-app'
+            bat 'docker run -d --name my-dotnet-app-container -p 8081:80 my-dotnet-app'
         }
     }
 }
