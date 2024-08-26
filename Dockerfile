@@ -5,8 +5,8 @@ FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019
 WORKDIR /inetpub/wwwroot
 
 # Ensure the necessary services are enabled and started
-RUN sc config trustedinstaller start= auto
-RUN sc start trustedinstaller
+SHELL ["cmd", "/S", "/C"]
+RUN sc config trustedinstaller start=auto && sc start trustedinstaller
 
 # Install IIS
 RUN dism.exe /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-WebServer /featurename:IIS-ISAPIFilter /featurename:IIS-ISAPIExtensions /featurename:IIS-NetFxExtensibility /featurename:IIS-ASPNET45 /featurename:IIS-ManagementConsole /NoRestart
