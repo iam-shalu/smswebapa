@@ -11,12 +11,12 @@ RUN Install-WindowsFeature -Name Web-Server, Web-WebServer, Web-Security, Web-IS
 # Switch to cmd to run icacls
 SHELL ["cmd", "/S", "/C"]
 
-# Grant IIS permissions to the IIS_IUSRS group
+# Grant IIS permissions to the IIS_IUSRS group and other necessary users
 RUN icacls "C:\inetpub\wwwroot" /grant IIS_IUSRS:(OI)(CI)F /T
-
-# Grant the Network Service and IUSR permissions to modify IIS settings
 RUN icacls "C:\inetpub\wwwroot" /grant "IUSR":(OI)(CI)F /T
 RUN icacls "C:\inetpub\wwwroot" /grant "NETWORK SERVICE":(OI)(CI)F /T
+RUN icacls "C:\inetpub\wwwroot" /grant "Authenticated Users":(OI)(CI)RX /T
+RUN icacls "C:\inetpub\wwwroot" /grant "Users":(OI)(CI)RX /T
 
 # Switch back to PowerShell
 SHELL ["powershell", "-Command"]
