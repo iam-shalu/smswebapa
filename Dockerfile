@@ -8,8 +8,6 @@ WORKDIR /inetpub/wwwroot
 SHELL ["powershell", "-Command"]
 RUN Install-WindowsFeature -Name Web-Server, Web-WebServer, Web-Security, Web-ISAPI-Filter, Web-Net-Ext45, Web-Asp-Net45, Web-Mgmt-Console
 
-RUN powershell -Command "Reset-IISConfig"
-
 # Switch to cmd to run icacls
 SHELL ["cmd", "/S", "/C"]
 
